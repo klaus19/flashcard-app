@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useState, useEffect } from "react";
+import AddFlashcardForm from "./components/AddFlashcardForm";
+import FlashcardList from "./components/FlashcardList";
+import { getCards, saveCards } from "./utils/storage";
 
 function App() {
+  const [cards, setCards] = useState(() => getCards());
+
+  useEffect(() => {
+    saveCards(cards);
+  }, [cards]);
+
+  const handleAdd = (newCard) => {
+    const newCards = [...cards, { id: Date.now(), ...newCard }];
+    setCards(newCards);
+  };
+
+  const handleDelete = (id) => {
+    const updatedCards = cards.filter((card) => card.id !== id);
+    setCards(updatedCards);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "40px", fontFamily: "Arial" }}>
+      <h1>📚 Flashcard App</h1>
+      <AddFlashcardForm onAdd={handleAdd} />
+      <FlashcardList cards={cards} onDelete={handleDelete} />
     </div>
   );
 }
